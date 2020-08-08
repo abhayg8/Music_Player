@@ -1,8 +1,10 @@
 # Music_Player
-Music player program with capability to add sound effects
+Music player/recorder program
 
 ### Dependencies
 Python libraries:
 - tkinter
 - pygame
+- pyaudio
 - mutagen
+- threading

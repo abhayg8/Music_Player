@@ -1,5 +1,8 @@
 #Main GUI window and interactions go here
 
+import threading
+import pyaudio
+import wave
 import tkinter.filedialog
 import tkinter as tk
 from pygame import mixer
@@ -12,9 +15,20 @@ from math import floor
 #global variables
 newSong = True
 isPlaying = False
+isRecording = False
 currentPlaying = "./../Sample/sample1.mp3"
-currentSaveDir = "./../temp_save"
 songLength = "--:--"
+saveFile = ''
+nameWindow = None
+
+#PyAudio variables
+chunk = 1024 
+sampleFormat = pyaudio.paInt16 
+channels = 2
+fs = 44100 
+pyaud = pyaudio.PyAudio()
+streamGlob = None
+frames = []
 
 #Button handlers
 def handle_play(event):
@@ -45,11 +59,6 @@ def handle_select(event):
     songLength = findSongLength(currentPlaying)
     songLengthLabelText.set(songLength)
 
-def handle_savedir(event):
-    global currentSaveDir, currentSaveDirLabel
-    dirSelected = tk.filedialog.askdirectory()
-    currentSaveDir = dirSelected
-    currentSaveDirLabel.set(dirSelected)
 
 
 
@@ -81,7 +90,58 @@ def duration_control():
         playTimeLabelText.set("--:--")
     playButton.after(1000,duration_control)
 
+def handle_record(event):
+    global isRecording, chunk, sampleFormat, fs, channels, pyaud, streamGlob
+    isRecording=True
+
+    streamGlob = pyaud.open(format=sampleFormat,channels=channels,rate=fs,frames_per_buffer=chunk,input=True)
+    thread = threading.Thread(target=record_loop)
+    thread.start()
       
+def record_loop():
+    global isRecording, streamGlob, frames, chunk
+    while isRecording:
+        data = streamGlob.read(chunk)
+        frames.append(data)
+def stop_record(event):
+    global isRecording, frames, channels, sampleFormat, fs, pyaud, streamGlob, saveFile, nameWindow, songNameEntry
+    isRecording = False
+
+    nameWindow = tk. Tk()
+    nameWindow.geometry("300x300")
+    nameWindow.title("Epic DAW")
+    songNameLabel = tk.Label(nameWindow, text="Enter recording name:", width=40, height=7)
+    songNameLabel.grid(row=0,columnspan=2)
+    songNameEntry = tk.Entry(nameWindow)
+    songNameEntry.grid(row=1,columnspan=2)
+    okButton = tk.Button(nameWindow, text="Save", command=handle_saverec)
+    okButton.grid(row=2,column=0)
+    cancelButton = tk.Button(nameWindow, text="Cancel", command=handle_cancel)
+    cancelButton.grid(row=2, column=1)
+
+def handle_saverec():
+    global nameWindow, frames, channels, sampleFormat, fs, pyaud, streamGlob, songNameEntry
+    
+    songName = songNameEntry.get()
+    filepath = "./../Recordings/" + songName + ".wav"
+    print(filepath)
+    nameWindow.destroy()
+
+    #Making the wave file
+    wavFile = wave.open(filepath, 'wb')
+    wavFile.setnchannels(channels)
+    wavFile.setsampwidth(pyaud.get_sample_size(sampleFormat))
+    wavFile.setframerate(fs)
+    wavFile.writeframes(b''.join(frames))
+    wavFile.close()
+    frames = []
+    pyaud.close(streamGlob)
+
+def handle_cancel():
+    global frames, nameWindow
+
+    frames = []
+    nameWindow.destroy()
 
 
 
@@ -125,17 +185,20 @@ pauseFrame.place(x=0,y=400)
 rewindFrame = tk.Frame(master=window, relief=tk.GROOVE, width=100, height=50, borderwidth=5)
 rewindFrame.place(x=0,y=450)
 
-saveDirFrame = tk.Frame(master=window, relief=tk.GROOVE, width=300, height=50, borderwidth=5)
-saveDirFrame.place(x=100,y=0)
-
 selectFrame = tk.Frame(master=window, relief=tk.GROOVE, width=300, height=50, borderwidth=5)
-selectFrame.place(x=100,y=50)
+selectFrame.place(x=100,y=0)
 
 playTimeFrame = tk.Frame(master=window, relief=tk.GROOVE, width=50, height=50, borderwidth=5)
 playTimeFrame.place(x=100, y=350)
 
 songLengthFrame = tk.Frame(master=window, relief=tk.GROOVE, width=50, height=50, borderwidth=5)
 songLengthFrame.place(x=100, y=425)
+
+recordFrame = tk.Frame(master=window, relief=tk.GROOVE, width=50, height=50, borderwidth=5)
+recordFrame.place(x=300, y=200)
+
+stopRecordFrame = tk.Frame(master=window, relief=tk.GROOVE, width=50, height=50, borderwidth=5)
+stopRecordFrame.place(x=300, y=300)
 
 
 
@@ -153,17 +216,19 @@ rewindButton = tk.Button(master=rewindFrame,text="Rewind", width=11, height=2)
 rewindButton.pack()
 rewindButton.bind("<Button-1>", handle_rewind)
 
-saveDirButton = tk.Button(master=saveDirFrame,text="Choose save directory", width=17, height=2)
-saveDirButton.pack(side=tk.LEFT)
-saveDirButton.bind("<Button-1>", handle_savedir)
-saveDirLabel = tk.Label(saveDirFrame, textvariable=currentSaveDirLabel, width=85, height=2)
-saveDirLabel.pack(side=tk.LEFT)
-
 selectButton = tk.Button(master=selectFrame,text="Choose song", width=17, height=2)
 selectButton.pack(side=tk.LEFT)
 selectButton.bind("<Button-1>", handle_select)
 selectLabel = tk.Label(selectFrame, textvariable=currentPlayingLabel, width=85, height=2)
 selectLabel.pack(side=tk.LEFT)
+
+recordButton = tk.Button(master=recordFrame, text="Record", width=17, height=2)
+recordButton.pack(side=tk.LEFT)
+recordButton.bind("<Button-1>", handle_record)
+
+stopRecordButton = tk.Button(master=stopRecordFrame, text="Stop Record", width=17, height=2)
+stopRecordButton.pack(side=tk.LEFT)
+stopRecordButton.bind("<Button-1>", stop_record)
 
 #Setting up volume slider
 volumeLabel = tk.Label(volumeFrame, text="    Volume", width=11, height=1)
