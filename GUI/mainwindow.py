@@ -177,42 +177,42 @@ volumeFrame = tk.Frame(master=window, relief=tk.GROOVE,  width=100, height=350, 
 volumeFrame.place(x=0,y=0)
 
 playFrame = tk.Frame(master=window, relief=tk.GROOVE, width=100, height=50, borderwidth=5)
-playFrame.place(x=0,y=350)
+playFrame.place(x=100,y=50)
 
 pauseFrame = tk.Frame(master=window, relief=tk.GROOVE, width=100, height=50, borderwidth=5)
-pauseFrame.place(x=0,y=400)
+pauseFrame.place(x=100,y=100)
 
 rewindFrame = tk.Frame(master=window, relief=tk.GROOVE, width=100, height=50, borderwidth=5)
-rewindFrame.place(x=0,y=450)
+rewindFrame.place(x=100,y=150)
 
 selectFrame = tk.Frame(master=window, relief=tk.GROOVE, width=300, height=50, borderwidth=5)
 selectFrame.place(x=100,y=0)
 
 playTimeFrame = tk.Frame(master=window, relief=tk.GROOVE, width=50, height=50, borderwidth=5)
-playTimeFrame.place(x=100, y=350)
+playTimeFrame.place(x=665, y=50)
 
 songLengthFrame = tk.Frame(master=window, relief=tk.GROOVE, width=50, height=50, borderwidth=5)
-songLengthFrame.place(x=100, y=425)
+songLengthFrame.place(x=665, y=100)
 
 recordFrame = tk.Frame(master=window, relief=tk.GROOVE, width=50, height=50, borderwidth=5)
-recordFrame.place(x=300, y=200)
+recordFrame.place(x=100, y=200)
 
 stopRecordFrame = tk.Frame(master=window, relief=tk.GROOVE, width=50, height=50, borderwidth=5)
-stopRecordFrame.place(x=300, y=300)
+stopRecordFrame.place(x=100, y=250)
 
 
 
 
 #Setting up control buttons
-playButton = tk.Button(master=playFrame,text="Play", width=11, height=2)
+playButton = tk.Button(master=playFrame,text="Play", width=17, height=2)
 playButton.pack()
 playButton.bind("<Button-1>", handle_play)
 
-pauseButton = tk.Button(master=pauseFrame,text="Pause", width=11, height=2)
+pauseButton = tk.Button(master=pauseFrame,text="Pause", width=17, height=2)
 pauseButton.pack()
 pauseButton.bind("<Button-1>", handle_pause)
 
-rewindButton = tk.Button(master=rewindFrame,text="Rewind", width=11, height=2)
+rewindButton = tk.Button(master=rewindFrame,text="Rewind", width=17, height=2)
 rewindButton.pack()
 rewindButton.bind("<Button-1>", handle_rewind)
 
@@ -233,19 +233,19 @@ stopRecordButton.bind("<Button-1>", stop_record)
 #Setting up volume slider
 volumeLabel = tk.Label(volumeFrame, text="    Volume", width=11, height=1)
 volumeLabel.pack(side=tk.TOP)
-volumeSlider = tk.Scale(volumeFrame, from_=100, to=0, width=58, length=313, command = set_volume)
+volumeSlider = tk.Scale(volumeFrame, from_=100, to=0, width=58, length=264, command = set_volume)
 volumeSlider.set(50)
 volumeSlider.pack(side=tk.TOP)
 
 #Setting up info labels
-playTimeInfo = tk.Label(master=playTimeFrame, text="Time Elapsed:", width=11, height=4)
+playTimeInfo = tk.Label(master=playTimeFrame, text="Time Elapsed:", width=10, height=2)
 playTimeInfo.pack(side=tk.LEFT)
-playTimeLabel = tk.Label(master=playTimeFrame, textvariable=playTimeLabelText, width=8, height=1)
+playTimeLabel = tk.Label(master=playTimeFrame, textvariable=playTimeLabelText, width=6, height=1)
 playTimeLabel.pack(side=tk.RIGHT)
 
-songLengthInfo = tk.Label(master=songLengthFrame, text="Song Length:", width=11, height=4)
+songLengthInfo = tk.Label(master=songLengthFrame, text="Song Length:", width=10, height=2)
 songLengthInfo.pack(side=tk.LEFT)
-songLengthLabel = tk.Label(master=songLengthFrame, textvariable=songLengthLabelText, width=8, height=1)
+songLengthLabel = tk.Label(master=songLengthFrame, textvariable=songLengthLabelText, width=6, height=1)
 songLengthLabel.pack(side=tk.RIGHT)
 
 playButton.after(1000,duration_control)
