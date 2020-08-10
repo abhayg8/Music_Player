@@ -8,3 +8,7 @@ Python libraries:
 - pyaudio
 - mutagen
 - threading
+- PIL
+
+###Future Additions
+ Song visualiser/Album art display
