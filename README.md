@@ -10,5 +10,4 @@ Python libraries:
 - threading
 - PIL
 
-###Future Additions
- Song visualiser/Album art display
+
