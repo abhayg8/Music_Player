@@ -59,6 +59,8 @@ def handle_select(event):
     mixer.music.load(currentPlaying)
     songLength = findSongLength(currentPlaying)
     songLengthLabelText.set(songLength)
+    albumArt = getSongImage(currentPlaying)
+    return "break"
 
 
 
@@ -111,13 +113,14 @@ def stop_record(event):
     nameWindow = tk. Tk()
     nameWindow.geometry("300x300")
     nameWindow.title("Epic DAW")
-    songNameLabel = tk.Label(nameWindow, text="Enter recording name:", width=40, height=7)
+    nameWindow.configure(bg='black')
+    songNameLabel = tk.Label(nameWindow, text="Enter recording name:", width=40, height=7, bg='black', foreground='white')
     songNameLabel.grid(row=0,columnspan=2)
     songNameEntry = tk.Entry(nameWindow)
     songNameEntry.grid(row=1,columnspan=2)
-    okButton = tk.Button(nameWindow, text="Save", command=handle_saverec)
+    okButton = tk.Button(nameWindow, text="Save", command=handle_saverec, bg='black', foreground='white')
     okButton.grid(row=2,column=0)
-    cancelButton = tk.Button(nameWindow, text="Cancel", command=handle_cancel)
+    cancelButton = tk.Button(nameWindow, text="Cancel", command=handle_cancel , bg='black', foreground='white')
     cancelButton.grid(row=2, column=1)
 
 def handle_saverec():
@@ -189,6 +192,10 @@ stop_photo = Image.open("C:/Users/abhay/Documents/Projects/Music_Player/images/s
 stop_photo_resize = stop_photo.resize((50,37), Image.ANTIALIAS)
 stop_photo_tk = ImageTk.PhotoImage(stop_photo_resize)
 
+defAlbumArt = getSongImage(currentPlaying)
+defAlbumArt_resize = defAlbumArt.resize((435,238), Image.ANTIALIAS)
+defAlbumArt_tk = ImageTk.PhotoImage(defAlbumArt_resize)
+
 #Used to calibrate the size of pixels in buttons
 pixelVirtual = tk.PhotoImage(width=1,height=1)
 
@@ -219,6 +226,9 @@ recordFrame.place(x=100, y=200)
 
 stopRecordFrame = tk.Frame(master=window, relief=tk.GROOVE, width=50, height=50, borderwidth=5)
 stopRecordFrame.place(x=100, y=250)
+
+albumArtFrame = tk.Frame(master=window, relief=tk.GROOVE, width=450, height=250, borderwidth=5)
+albumArtFrame.place(x=217,y=50)
 
 
 
@@ -267,6 +277,10 @@ songLengthInfo = tk.Label(master=songLengthFrame, text="Song Length:", width=10,
 songLengthInfo.pack(side=tk.LEFT)
 songLengthLabel = tk.Label(master=songLengthFrame, textvariable=songLengthLabelText, width=6, height=1, bg='black', foreground='white')
 songLengthLabel.pack(side=tk.RIGHT)
+
+#Album Art
+albumArtLabel= tk.Label(master=albumArtFrame, image=defAlbumArt_tk, width=435, height=237, bg='black')
+albumArtLabel.pack(side=tk.TOP)
 
 playButton.after(1000,duration_control)
 window.mainloop()
